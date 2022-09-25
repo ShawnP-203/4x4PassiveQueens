@@ -1,5 +1,5 @@
 # Shawn Plackiyil
-# 9-24-2022
+# 9-24-2022 (last updated 9-25-2022)
 # Passive Queens
 # Places 4 chess queens on a board in positions where their attack lines don't overlap
 from random import choice
@@ -10,24 +10,22 @@ while True:
   for row in boardNumbers:
     for square in row:
       if row in boardNumbers[::3] and square not in row[::3] \
-      or row not in boardNumbers[::3] and square in row[::3]: # Queens cannot be in corners
+      or row not in boardNumbers[::3] and square in row[::3]:
+        # Queens cannot be in corners or the four center squares
         queenPossibilities.append(square)
   queenPossibilities = choice(queenPossibilities)
   queens = [queenPossibilities] # Needs to be initialized as a list
   
   while len(queens) < 4:
-    queenPossibilities = [] # Clears list
-    for queen in queens:
-      for number in boardClockwise:
-        if queens[len(queens) - 1] == number:
-          if len(queens) == 1: calculationDirection = choice([-3, 3])
-          # Chooses the direction when starting the algorithm which travels the board's edges
-          boardClockwiseIndex = boardClockwise.index(number) + calculationDirection
-          if boardClockwiseIndex > 11: boardClockwiseIndex -= 12
-          # Above handler is only necessary for oversized indices because
-          # Python already has a feature which counts negative indices from the end of a list
-          queenPossibilities.append(boardClockwise[boardClockwiseIndex])
-    queenPossibilities = choice(queenPossibilities)
+    for number in boardClockwise:
+      if queens[len(queens) - 1] == number:
+        if len(queens) == 1: calculationDirection = choice([-3, 3])
+        # Chooses the direction when starting the algorithm which travels the board's edges
+        boardClockwiseIndex = boardClockwise.index(number) + calculationDirection
+        if boardClockwiseIndex > 11: boardClockwiseIndex -= 12
+        # Above handler is only necessary for oversized indices because
+        # Python already has a feature which counts negative indices from the end of a list
+        queenPossibilities = boardClockwise[boardClockwiseIndex]
     queens.append(queenPossibilities)
   
   boardFormat = [""] * 16
@@ -37,9 +35,9 @@ while True:
       if queen == square:
         boardFormat[square] = " ♕ {} ".format(queenCount)
       elif "♕" not in boardFormat[square]: boardFormat[square] = "empty"
-      # The conditional ensures that "empty" doesn't overwrite a queen
+      # This conditional ensures that "empty" doesn't overwrite a queen
   board = """
-  Placed 4 chess queens on a board:
+  Placed 4 passive chess queens on a board:
   
    {} | {} | {} | {}
   ------------------------------
@@ -51,7 +49,7 @@ while True:
   """.format(*boardFormat) # Unpacks list to the 16 placeholders
   # Output starts here
   print(board)
-  retry = "initialize" # retry can get anything as long as it's truthy
+  retry = "initializer" # retry can get anything as long as it's truthy
   while retry and retry != "R":
     retry = input("Press [ENTER] to exit or [R] to run again. ").upper().strip()
   if not retry: break
